@@ -27,10 +27,34 @@
 
 	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/be183c5d-cab0-4c8c-9a8c-c8b6f6fe1f63)
 
-   	Para autenticarse en el repositorio de Instana utilizar como usuario "_" y contraseña el agent key de Instana (utilizado para la descarga del agente) .
-	
+   	Para autenticarse en el repositorio de Instana utilizar como usuario "_" (guión bajo) y contraseña el agent key de Instana (utilizado para la descarga del agente) .
 
-Instalar unzip o descomprimir localmente y luego subir al servidor
+ 	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b910a8f3-bab3-4746-b8ce-88a0fdf8085b)
+
+
+3. Subir el archivo zip descargado en el paso anterior al servidor nginx y descomprimir. 
+
+	Ejemplo de ejecucion:
+
+		root@ubuntu-server:~# unzip linux-amd64-glibc-nginx-1.18.0.zip 
+		Archive:  linux-amd64-glibc-nginx-1.18.0.zip
+		  inflating: glibc-libinstana_sensor.so  
+		  inflating: glibc-nginx-1.18.0-ngx_http_ot_module.so  
+		root@ubuntu-server:~# ls -lart
+		total 3924
+		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
+		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+		-rwxr-xr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
+		-rwxr-xr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
+		-rwxrwxr-x  1 root root 1054316 Jan 22 16:29 linux-amd64-glibc-nginx-1.18.0.zip
+		drwxr-xr-x 19 root root    4096 Mar 15 03:01 ..
+		drwx------  2 root root    4096 Mar 15 03:01 .ssh
+		drwx------  3 root root    4096 Mar 15 03:01 snap
+		drwx------  4 root root    4096 Mar 15 03:38 .
+
+
+
+
 
 Agregar permisos de ejecucion sobre los binarios descargados
 
