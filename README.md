@@ -4,10 +4,10 @@ Habilitar tracing nginx
 
 	nginx -v
 
-   Ejemplo:
+   	Ejemplo:
 
-   	root@ubuntu-server:~# nginx -v
-	nginx version: nginx/1.18.0 (Ubuntu)
+	   	root@ubuntu-server:~# nginx -v
+		nginx version: nginx/1.18.0 (Ubuntu)
 
 Descargar el binario
 
