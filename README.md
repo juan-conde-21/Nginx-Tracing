@@ -2,11 +2,11 @@
 
 1. Determinar version de nginx ejecutando el siguiente comando.
 
-	nginx -v
+		nginx -v
 
    	Ejemplo:
 
-	   	root@ubuntu-server:~# nginx -v
+	  	root@ubuntu-server:~# nginx -v
 		nginx version: nginx/1.18.0 (Ubuntu)
 
 Descargar el binario
