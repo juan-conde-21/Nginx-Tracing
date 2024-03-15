@@ -1,4 +1,4 @@
-Habilitar tracing nginx
+#Habilitar tracing nginx
 
 1. Determinar version de nginx ejecutando el siguiente comando.
 
