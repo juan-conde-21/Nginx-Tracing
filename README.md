@@ -34,6 +34,10 @@
 
 3. Subir el archivo zip descargado en el paso anterior al servidor nginx y descomprimir. 
 
+	Comando:
+
+		unzip linux-amd64-glibc-nginx-{nginx-version}.zip
+
 	Ejemplo de ejecucion:
 
 		root@ubuntu-server:~# unzip linux-amd64-glibc-nginx-1.18.0.zip 
@@ -53,29 +57,57 @@
 		drwx------  4 root root    4096 Mar 15 03:38 .
 
 
+4. Agregar permisos de ejecucion sobre los binarios descargados
+
+	Comando:
+
+		chmod 775 glibc-*
+
+	Resultado:
+
+		root@ubuntu-server:~# chmod 775 glibc-*
+		root@ubuntu-server:~# ls -lart
+		total 3924
+		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
+		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+		-rwxrwxr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
+		-rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so		
+
+5. Modificar los nombres de las librerias descargadas.
+
+	Comando:
+
+		mv glibc-nginx-1.18.0-ngx_http_ot_module.so ngx_http_opentracing_module.so
+		mv glibc-libinstana_sensor.so libinstana_sensor.so
+
+	Resultado:
+
+		root@ubuntu-server:~# ls -lart
+		total 3924
+		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
+		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+		-rwxrwxr-x  1 root root 1147832 Jan 22 16:24 ngx_http_opentracing_module.so
+		-rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
 
 
+6. Identificar el path de modulos de nginx.
 
-Agregar permisos de ejecucion sobre los binarios descargados
+	Comando:
 
-	chmod 775 glibc-*
+		nginx -V
 
-
-Identificar el path de modulos
-
-	nginx -V
-
-	Buscar por la ubicacion de la ruta para los modulos
+	Identificar la ubicacion de la ruta de los modulos de nginx:
 	
-	--modules-path
+		--modules-path=
 
-Modificar los nombres de las librerias descargadas
+	Resultado:
+
+	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b6d79588-3fc3-4ca8-b21d-5a5602443542)
 
 
-	mv glibc-nginx-1.22.1-ngx_http_ot_module.so ngx_http_opentracing_module.so
-	mv glibc-libinstana_sensor.so libinstana_sensor.so
 
-Crear la carpeta de modulos en caso no existir
+
+8. Crear la carpeta de modulos en caso no existir
 
 	mkdir /usr/lib/nginx
 	mkdir /usr/lib/nginx/modules
