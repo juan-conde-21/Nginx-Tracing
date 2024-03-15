@@ -77,11 +77,13 @@
 
 	Comando:
 
-		mv glibc-nginx-1.18.0-ngx_http_ot_module.so ngx_http_opentracing_module.so
+		mv glibc-nginx-{nginx-version}-ngx_http_ot_module.so ngx_http_opentracing_module.so
 		mv glibc-libinstana_sensor.so libinstana_sensor.so
 
 	Resultado:
 
+		root@ubuntu-server:~# mv glibc-nginx-1.18.0-ngx_http_ot_module.so ngx_http_opentracing_module.so
+		root@ubuntu-server:~# mv glibc-libinstana_sensor.so libinstana_sensor.so
 		root@ubuntu-server:~# ls -lart
 		total 3924
 		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
@@ -105,37 +107,75 @@
 	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b6d79588-3fc3-4ca8-b21d-5a5602443542)
 
 
+7. Crear la carpeta de modulos en caso no existir.
 
-
-8. Crear la carpeta de modulos en caso no existir
-
-	mkdir /usr/lib/nginx
-	mkdir /usr/lib/nginx/modules
-
-
-Copiar los binarios en la carpeta de modulos de nginx
-
-	mv ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
-
-
-Crear el archivo instana-config.json con los siguientes datos
-
-	vi /etc/instana-config.json
+	Comando:
 	
-	{
-	  "service": "nginxtracing_nginx",
-	  "agent_host": "127.0.0.1",
-	  "agent_port": 42699,
-	  "max_buffered_spans": 1000
-	}
+	 	mkdir /usr/lib/nginx
+		mkdir /usr/lib/nginx/modules
+
+8. Copiar los binarios en la carpeta de modulos de nginx
+
+	Comando:
+
+	   cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
+	   ls -lart /usr/lib/nginx/modules
+
+   	Resultado:
+
+		root@ubuntu-server:~# cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
+		root@ubuntu-server:~# ls -lart /usr/lib/nginx/modules
+		total 3216
+		-rw-r--r-- 1 root root  180792 Nov 10  2022 ngx_stream_module.so
+		-rw-r--r-- 1 root root  108168 Nov 10  2022 ngx_mail_module.so
+		-rw-r--r-- 1 root root   23552 Nov 10  2022 ngx_http_xslt_filter_module.so
+		-rw-r--r-- 1 root root   27728 Nov 10  2022 ngx_http_image_filter_module.so
+		drwxr-xr-x 3 root root    4096 Mar 15 03:11 ..
+		drwxr-xr-x 2 root root    4096 Mar 15 03:56 .
+		-rwxrwxr-x 1 root root 1147832 Mar 15 03:57 ngx_http_opentracing_module.so
+		-rwxrwxr-x 1 root root 1783768 Mar 15 03:57 libinstana_sensor.so
+
+9. Crear el archivo instana-config.json con el nombre del servicio (con este nombre sera reconocido en Instana )  y los datos del agente Instana.
+
+	Comando:
+
+		vi /etc/instana-config.json
+
+   	Contenido del archivo instana-config.json :
+
+  		{
+		  "service": "nginxtracing_nginx",
+		  "agent_host": "127.0.0.1",
+		  "agent_port": 42699,
+		  "max_buffered_spans": 1000
+		}
+
+10. Modificar el archivo de configuracion de nginx agregando los modulos y variables para habilitar el tracing.
+
+	Comando:
+
+		cd /etc/nginx
+		vi nginx.conf
+
+	Agregar las siguientes lineas de configuracion:
+
+			load_module modules/ngx_http_opentracing_module.so; 
+			
+			env INSTANA_SERVICE_NAME;
+			env INSTANA_AGENT_HOST;
+			env INSTANA_AGENT_PORT;
+			env INSTANA_MAX_BUFFERED_SPANS;
+			env INSTANA_DEV;
+
+		#Dentro de la sección http
+		
+			opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+			opentracing_propagate_context;
 
 
+	Ejemplo del archivo de configuracion modificado:
 
-Agregar al archivo de configuracion
 
-cd /etc/nginx
-
-vi nginx.conf
 
 	load_module modules/ngx_http_opentracing_module.so; 
 	
