@@ -2,17 +2,33 @@
 
 1. Determinar version de nginx ejecutando el siguiente comando.
 
+	Comando:
+
 		nginx -v
 
-   	Ejemplo:
+   	Resultado:
 
 	  	root@ubuntu-server:~# nginx -v
 		nginx version: nginx/1.18.0 (Ubuntu)
 
-Descargar el binario
+2. Descargar el binario correspondiente a la version de nginx instalada.
 
-	wget https://_:{api_key}@artifact-public.instana.io/artifactory/shared/com/instana/nginx_tracing/1.8.3/linux-amd64-glibc-nginx-1.22.1.zip
+	- Ingresar a la siguiente ruta:
 
+ 	https://www.ibm.com/docs/en/instana-observability/current?topic=nginx-distributed-tracing-binaries
+
+	- Identificar la version del binario correspondiente.
+
+	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/3a71eb24-5b91-4ba2-a02b-6aa91809a9c9)
+
+	- Descargar el archivo zip correspondiente a la distribucion de Linux utilizado.
+
+	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b006457e-8b7c-4d7a-9f72-880165970348)
+
+	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/be183c5d-cab0-4c8c-9a8c-c8b6f6fe1f63)
+
+   	Para autenticarse en el repositorio de Instana utilizar como usuario "_" y contraseña el agent key de Instana (utilizado para la descarga del agente) .
+	
 
 Instalar unzip o descomprimir localmente y luego subir al servidor
 
