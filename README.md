@@ -1,4 +1,4 @@
-## Habilitar tracing nginx
+## Habilitar Tracing para Nginx en Instana
 
 1. Determinar version de nginx ejecutando el siguiente comando.
 
@@ -175,20 +175,68 @@
 
 	Ejemplo del archivo de configuracion modificado:
 
+		load_module modules/ngx_http_opentracing_module.so;
+		
+		env INSTANA_SERVICE_NAME;
+		env INSTANA_AGENT_HOST;
+		env INSTANA_AGENT_PORT;
+		env INSTANA_MAX_BUFFERED_SPANS;
+		env INSTANA_DEV;
+		
+		user www-data;
+		worker_processes auto;
+		pid /run/nginx.pid;
+		include /etc/nginx/modules-enabled/*.conf;
+		
+		events {
+		        worker_connections 768;
+		        # multi_accept on;
+		}
+		
+		http {
+		
+		        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+		        opentracing_propagate_context;
+		
+		        ##
+		        # Basic Settings
+		        ##
+		
+11. Reiniciar los servicios de nginx para aplicar los cambios:
+
+	Comando:
+
+		systemctl restart nginx
+		systemctl status nginx
+
+	Resultado:
+
+		root@ubuntu-server:/etc/nginx# systemctl restart nginx
+		root@ubuntu-server:/etc/nginx# systemctl status nginx
+		● nginx.service - A high performance web server and a reverse proxy server
+		     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+		     Active: active (running) since Fri 2024-03-15 04:10:36 UTC; 6s ago
+		       Docs: man:nginx(8)
+		    Process: 3711 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+		    Process: 3713 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+		   Main PID: 3716 (nginx)
+		      Tasks: 5 (limit: 9511)
+		     Memory: 3.6M
+		     CGroup: /system.slice/nginx.service
+		             ├─3716 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+		             ├─3717 nginx: worker process
+		             └─3718 nginx: worker process
+		
+		Mar 15 04:10:36 ubuntu-server systemd[1]: Starting A high performance web server and a reverse proxy server...
+		Mar 15 04:10:36 ubuntu-server nginx[3711]: Instana C++ Sensor v1.8.3 has been loaded.
+		Mar 15 04:10:36 ubuntu-server nginx[3713]: Instana C++ Sensor v1.8.3 has been loaded.
+		Mar 15 04:10:36 ubuntu-server systemd[1]: Started A high performance web server and a reverse proxy server.
+
+12. Verificar en la consola de Instana, buscar por el nombre del servicio colocado en el archivo instana-config.json
+
+![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/f8d4aad3-6f8a-4040-92da-e053c4012a2a)
 
 
-	load_module modules/ngx_http_opentracing_module.so; 
-	
-	env INSTANA_SERVICE_NAME;
-	env INSTANA_AGENT_HOST;
-	env INSTANA_AGENT_PORT;
-	env INSTANA_MAX_BUFFERED_SPANS;
-	env INSTANA_DEV;
-	
----> dentro de http
-	
-	opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
-	
-	opentracing_propagate_context;
+
 
 
