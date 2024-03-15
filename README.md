@@ -159,18 +159,18 @@
 
 	Agregar las siguientes lineas de configuracion:
 
-			load_module modules/ngx_http_opentracing_module.so; 
+		load_module modules/ngx_http_opentracing_module.so; 
 			
-			env INSTANA_SERVICE_NAME;
-			env INSTANA_AGENT_HOST;
-			env INSTANA_AGENT_PORT;
-			env INSTANA_MAX_BUFFERED_SPANS;
-			env INSTANA_DEV;
+		env INSTANA_SERVICE_NAME;
+		env INSTANA_AGENT_HOST;
+		env INSTANA_AGENT_PORT;
+		env INSTANA_MAX_BUFFERED_SPANS;
+		env INSTANA_DEV;
 
 		#Dentro de la sección http
 		
-			opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
-			opentracing_propagate_context;
+		opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+		opentracing_propagate_context;
 
 
 	Ejemplo del archivo de configuracion modificado:
