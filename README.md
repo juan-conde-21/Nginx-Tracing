@@ -106,15 +106,16 @@
 
 	![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b6d79588-3fc3-4ca8-b21d-5a5602443542)
 
+	*Nota: esta ruta depende de la configuración aplicada a nginx, para este ejemplo se encuentra en la ruta "/usr/lib/nginx/modules"
 
-7. Crear la carpeta de modulos en caso no existir.
+7. Crear la carpeta de modulos en caso no existir. (Opcional)
 
 	Comando:
 	
 	 	mkdir /usr/lib/nginx
 		mkdir /usr/lib/nginx/modules
 
-8. Copiar los binarios en la carpeta de modulos de nginx
+8. Copiar los binarios en la carpeta de modulos de nginx, para este ejemplo esta en la ruta "/usr/lib/nginx/modules"
 
 	Comando:
 
@@ -150,7 +151,7 @@
 		  "max_buffered_spans": 1000
 		}
 
-10. Modificar el archivo de configuracion de nginx agregando los modulos y variables para habilitar el tracing.
+10. Modificar el archivo de configuracion de nginx agregando los modulos y variables para habilitar el tracing. Para este ejemplo la ruta de modulos es la siguiente "/usr/lib/nginx/modules"
 
 	Comando:
 
@@ -159,7 +160,7 @@
 
 	Agregar las siguientes lineas de configuracion:
 
-		load_module modules/ngx_http_opentracing_module.so; 
+		load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so; 
 			
 		env INSTANA_SERVICE_NAME;
 		env INSTANA_AGENT_HOST;
@@ -175,7 +176,7 @@
 
 	Ejemplo del archivo de configuracion modificado:
 
-		load_module modules/ngx_http_opentracing_module.so;
+		load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so;
 		
 		env INSTANA_SERVICE_NAME;
 		env INSTANA_AGENT_HOST;
