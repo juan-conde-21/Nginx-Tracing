@@ -195,15 +195,62 @@
 		}
 		
 		http {
-		
-		        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
-		        opentracing_propagate_context;
-		
 		        ##
 		        # Basic Settings
 		        ##
+
+11. Luego modificar el archivo donde se han definido las reglas para redireccionar solicitudes web hacia otras URL o servidores.
+
+
+    Agregar al inicio de la linea del archivo de configuracion:
 		
-11. Reiniciar los servicios de nginx para aplicar los cambios:
+        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+        opentracing_propagate_context;
+
+
+    Ejemplo del archivo de configuracion modificado:
+
+
+        root@60699ccd084b:/etc/nginx/conf.d# cat default.conf
+	
+        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+        opentracing_propagate_context;
+
+        server {
+	    listen       80;
+	    listen  [::]:80;
+	    server_name  localhost;
+	
+	    #access_log  /var/log/nginx/host.access.log  main;
+	
+	    location / {
+	        root   /usr/share/nginx/html;
+	        index  index.html index.htm;
+	    }
+	
+	    location /nginx_status {
+	        stub_status  on;
+	        access_log   off;
+	    }
+	
+	    location /status_app {
+	        proxy_pass http://192.168.68.60:9090/status;
+	
+	    }
+	
+	
+	    #error_page  404              /404.html;
+	
+	    # redirect server error pages to the static page /50x.html
+	    #
+	    error_page   500 502 503 504  /50x.html;
+	    location = /50x.html {
+	        root   /usr/share/nginx/html;
+	    }
+
+  
+
+12. Reiniciar los servicios de nginx para aplicar los cambios:
 
 	Comando:
 
@@ -233,7 +280,7 @@
 		Mar 15 04:10:36 ubuntu-server nginx[3713]: Instana C++ Sensor v1.8.3 has been loaded.
 		Mar 15 04:10:36 ubuntu-server systemd[1]: Started A high performance web server and a reverse proxy server.
 
-12. Verificar en la consola de Instana, buscar por el nombre del servicio colocado en el archivo instana-config.json
+13. Verificar en la consola de Instana, buscar por el nombre del servicio colocado en el archivo instana-config.json
 
 ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/f8d4aad3-6f8a-4040-92da-e053c4012a2a)
 
