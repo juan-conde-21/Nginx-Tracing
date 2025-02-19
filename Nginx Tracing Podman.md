@@ -112,136 +112,167 @@
 
 7. Crear la carpeta de modulos en caso no existir. (Opcional)
 
-	Comando:
+   Comando:
 	
-	 	mkdir /usr/lib/nginx
-		mkdir /usr/lib/nginx/modules
+       mkdir /usr/lib/nginx
+       mkdir /usr/lib/nginx/modules
 
 8. Copiar los binarios en la carpeta de modulos de nginx, para este ejemplo esta en la ruta "/usr/lib/nginx/modules"
 
-	Comando:
+   Comando:
 
-	   cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
-	   ls -lart /usr/lib/nginx/modules
+       cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
+       ls -lart /usr/lib/nginx/modules
 
-   	Resultado:
+   Resultado:
 
-		root@60699ccd084b:~# cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
-		root@60699ccd084b:~# ls -lart /usr/lib/nginx/modules
-		total 3216
-		-rw-r--r-- 1 root root  180792 Nov 10  2022 ngx_stream_module.so
-		-rw-r--r-- 1 root root  108168 Nov 10  2022 ngx_mail_module.so
-		-rw-r--r-- 1 root root   23552 Nov 10  2022 ngx_http_xslt_filter_module.so
-		-rw-r--r-- 1 root root   27728 Nov 10  2022 ngx_http_image_filter_module.so
-		drwxr-xr-x 3 root root    4096 Mar 15 03:11 ..
-		drwxr-xr-x 2 root root    4096 Mar 15 03:56 .
-		-rwxrwxr-x 1 root root 1147832 Mar 15 03:57 ngx_http_opentracing_module.so
-		-rwxrwxr-x 1 root root 1783768 Mar 15 03:57 libinstana_sensor.so
+       root@60699ccd084b:~# cp ngx_http_opentracing_module.so libinstana_sensor.so /usr/lib/nginx/modules
+       root@60699ccd084b:~# ls -lart /usr/lib/nginx/modules
+       total 3216
+       -rw-r--r-- 1 root root  180792 Nov 10  2022 ngx_stream_module.so
+       -rw-r--r-- 1 root root  108168 Nov 10  2022 ngx_mail_module.so
+       -rw-r--r-- 1 root root   23552 Nov 10  2022 ngx_http_xslt_filter_module.so
+       -rw-r--r-- 1 root root   27728 Nov 10  2022 ngx_http_image_filter_module.so
+       drwxr-xr-x 3 root root    4096 Mar 15 03:11 ..
+       drwxr-xr-x 2 root root    4096 Mar 15 03:56 .
+       -rwxrwxr-x 1 root root 1147832 Mar 15 03:57 ngx_http_opentracing_module.so
+       -rwxrwxr-x 1 root root 1783768 Mar 15 03:57 libinstana_sensor.so
 
 9. Crear el archivo instana-config.json con el nombre del servicio (con este nombre sera reconocido en Instana ), para este ejemplo se trabaja el nombre nginxtracing_nginx_1.26.2.
 
-	 Comando:
+   Comando:
 
-		vi /etc/instana-config.json
+       vi /etc/instana-config.json
 
    Contenido del archivo instana-config.json :
 
-  		{
-		  "service": "nginxtracing_nginx_1.26.2",
-		  "agent_host": "host.containers.internal",
-		  "agent_port": 42699,
-		  "max_buffered_spans": 1000
-		}
+       {
+       "service": "nginxtracing_nginx_1.26.2",
+       "agent_host": "host.containers.internal",
+       "agent_port": 42699,
+       "max_buffered_spans": 1000
+       }
 
 10. Modificar el archivo de configuracion de nginx agregando los modulos y variables para habilitar el tracing. Para este ejemplo la ruta de modulos es la siguiente "/usr/lib/nginx/modules"
 
-	 Comando:
+    Comando:
 
-		cd /etc/nginx
-		vi nginx.conf
+        cd /etc/nginx
+        vi nginx.conf
 
-	 Agregar las siguientes lineas de configuracion en la parte superior del archivo:
+    Agregar las siguientes lineas de configuracion en la parte superior del archivo:
 
-		load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so; 
+        load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so; 
 			
-		env INSTANA_SERVICE_NAME;
-		env INSTANA_AGENT_HOST;
-		env INSTANA_AGENT_PORT;
-		env INSTANA_MAX_BUFFERED_SPANS;
-		env INSTANA_DEV;
+        env INSTANA_SERVICE_NAME;
+        env INSTANA_AGENT_HOST;
+        env INSTANA_AGENT_PORT;
+        env INSTANA_MAX_BUFFERED_SPANS;
+        env INSTANA_DEV;
 
-	 Ejemplo del archivo de configuracion modificado:
+    Ejemplo del archivo de configuracion modificado:
 
-		load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so;
+        load_module /usr/lib/nginx/modules/ngx_http_opentracing_module.so;
 		
-		env INSTANA_SERVICE_NAME;
-		env INSTANA_AGENT_HOST;
-		env INSTANA_AGENT_PORT;
-		env INSTANA_MAX_BUFFERED_SPANS;
-		env INSTANA_DEV;
+        env INSTANA_SERVICE_NAME;
+        env INSTANA_AGENT_HOST;
+        env INSTANA_AGENT_PORT;
+        env INSTANA_MAX_BUFFERED_SPANS;
+        env INSTANA_DEV;
 		
-		user www-data;
-		worker_processes auto;
-		pid /run/nginx.pid;
-		include /etc/nginx/modules-enabled/*.conf;
+        user www-data;
+        worker_processes auto;
+        pid /run/nginx.pid;
+        include /etc/nginx/modules-enabled/*.conf;
 		
-		events {
-		        worker_connections 768;
-		        # multi_accept on;
-		}
+        events {
+                worker_connections 768;
+	        # multi_accept on;
+        }
 		
-		http {
-		        ##
-		        # Basic Settings
-		        ##
+        http {
+	        ##
+	        # Basic Settings
+	        ##
 
 
-11. Luego del
+11. Luego modificar el archivo donde se han definido las reglas para redireccionar solicitudes web hacia otras URL o servidores.
 
 
-    Agregar al inicio de la linea del archivo de configuracion donde esta ubicado status
+    Agregar al inicio de la linea del archivo de configuracion:
 		
-		opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
-		opentracing_propagate_context;
+        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+        opentracing_propagate_context;
 
 
-	 Ejemplo del archivo de configuracion modificado:
+    Ejemplo del archivo de configuracion modificado:
 
 
+        root@60699ccd084b:/etc/nginx/conf.d# cat default.conf
+	
+        opentracing_load_tracer /usr/lib/nginx/modules/libinstana_sensor.so /etc/instana-config.json;
+        opentracing_propagate_context;
+
+        server {
+	    listen       80;
+	    listen  [::]:80;
+	    server_name  localhost;
+	
+	    #access_log  /var/log/nginx/host.access.log  main;
+	
+	    location / {
+	        root   /usr/share/nginx/html;
+	        index  index.html index.htm;
+	    }
+	
+	    location /nginx_status {
+	        stub_status  on;
+	        access_log   off;
+	    }
+	
+	    location /status_app {
+	        proxy_pass http://192.168.68.60:9090/status;
+	
+	    }
+	
+	
+	    #error_page  404              /404.html;
+	
+	    # redirect server error pages to the static page /50x.html
+	    #
+	    error_page   500 502 503 504  /50x.html;
+	    location = /50x.html {
+	        root   /usr/share/nginx/html;
+	    }
+
+    
   
-11. Reiniciar los servicios de nginx para aplicar los cambios:
+12. Reiniciar los servicios de nginx para aplicar los cambios:
 
-	Comando:
+    Comando:
 
-		systemctl restart nginx
-		systemctl status nginx
+        nginx -s reload
 
-	Resultado:
+    Resultado:
 
-		root@60699ccd084b:/etc/nginx# systemctl restart nginx
-		root@60699ccd084b:/etc/nginx# systemctl status nginx
-		● nginx.service - A high performance web server and a reverse proxy server
-		     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
-		     Active: active (running) since Fri 2024-03-15 04:10:36 UTC; 6s ago
-		       Docs: man:nginx(8)
-		    Process: 3711 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
-		    Process: 3713 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
-		   Main PID: 3716 (nginx)
-		      Tasks: 5 (limit: 9511)
-		     Memory: 3.6M
-		     CGroup: /system.slice/nginx.service
-		             ├─3716 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
-		             ├─3717 nginx: worker process
-		             └─3718 nginx: worker process
-		
-		Mar 15 04:10:36 ubuntu-server systemd[1]: Starting A high performance web server and a reverse proxy server...
-		Mar 15 04:10:36 ubuntu-server nginx[3711]: Instana C++ Sensor v1.8.3 has been loaded.
-		Mar 15 04:10:36 ubuntu-server nginx[3713]: Instana C++ Sensor v1.8.3 has been loaded.
-		Mar 15 04:10:36 ubuntu-server systemd[1]: Started A high performance web server and a reverse proxy server.
+        root@60699ccd084b:/etc/nginx/conf.d# nginx -s reload
+        Instana C++ Sensor v1.11.0 has been loaded.
+        2025/02/19 03:45:15 [notice] 40#40: signal process started
 
-12. Verificar en la consola de Instana, buscar por el nombre del servicio colocado en el archivo instana-config.json
+13. Reiniciar el contendor nginx.
 
-![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/f8d4aad3-6f8a-4040-92da-e053c4012a2a)
+    Comando:
+
+        podman restart 60699ccd084b
+
+
+14. Verificar en la consola de Instana, buscar por el nombre del servicio colocado en el archivo instana-config.json
+
+    ![image](https://github.com/user-attachments/assets/b454ec4c-3a91-49b6-8720-ff3f53df3a9e)
+
+    ![image](https://github.com/user-attachments/assets/e3c7e766-72f2-499e-88be-c8868885ec27)
+
+    ![image](https://github.com/user-attachments/assets/180276e9-b159-4295-ba4d-620c0cb02c44)
 
 
 
