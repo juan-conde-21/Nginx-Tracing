@@ -2,113 +2,113 @@
 
 1. Determinar la version de nginx utilizada.
 
-	 Comando:
+   Comando:
 
        podman exec -it [containerID] bash
        nginx -v
 
    Resultado:
 
-	   [root@podman-server ~]# podman exec -it 60699ccd084b bash
+       [root@podman-server ~]# podman exec -it 60699ccd084b bash
        root@60699ccd084b:/# nginx -v
        nginx version: nginx/1.26.2
 
 
 2. Descargar el binario correspondiente a la version de nginx instalada.
 
-	 - Ingresar a la siguiente ruta:
+   - Ingresar a la siguiente ruta:
 
- 	   https://www.ibm.com/docs/en/instana-observability/current?topic=nginx-distributed-tracing-binaries
+     https://www.ibm.com/docs/en/instana-observability/current?topic=nginx-distributed-tracing-binaries
 
-	 - Identificar la version del binario correspondiente.
+   - Identificar la version del binario correspondiente.
 
-	   ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/3a71eb24-5b91-4ba2-a02b-6aa91809a9c9)
+     ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/3a71eb24-5b91-4ba2-a02b-6aa91809a9c9)
 
-	 - Descargar el archivo zip correspondiente a la distribucion de Linux utilizado.
+   - Descargar el archivo zip correspondiente a la distribucion de Linux utilizado.
 
-	   ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b006457e-8b7c-4d7a-9f72-880165970348)
+     ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b006457e-8b7c-4d7a-9f72-880165970348)
 
-	   ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/be183c5d-cab0-4c8c-9a8c-c8b6f6fe1f63)
+     ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/be183c5d-cab0-4c8c-9a8c-c8b6f6fe1f63)
 
    Para autenticarse en el repositorio de Instana utilizar como usuario "_" (guión bajo) y contraseña el agent key de Instana (utilizado para la descarga del agente) .
 
- 	 ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b910a8f3-bab3-4746-b8ce-88a0fdf8085b)
+   ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b910a8f3-bab3-4746-b8ce-88a0fdf8085b)
 
 3. Utilizar el archivo zip descargado en el paso anterior, subir y descomprimir en el contenedor. 
 
-	 Comando:
+   Comando:
 
-		   unzip linux-amd64-glibc-nginx-{nginx-version}.zip
+       unzip linux-amd64-glibc-nginx-{nginx-version}.zip
 
-	 Ejemplo de ejecucion:
+   Ejemplo de ejecucion:
 
-		root@60699ccd084b:~# unzip linux-amd64-glibc-nginx-1.18.0.zip 
-		Archive:  linux-amd64-glibc-nginx-1.18.0.zip
-		  inflating: glibc-libinstana_sensor.so  
-		  inflating: glibc-nginx-1.18.0-ngx_http_ot_module.so  
-		root@60699ccd084b:~# ls -lart
-		total 3924
-		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
-		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
-		-rwxr-xr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
-		-rwxr-xr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
-		-rwxrwxr-x  1 root root 1054316 Jan 22 16:29 linux-amd64-glibc-nginx-1.18.0.zip
-		drwxr-xr-x 19 root root    4096 Mar 15 03:01 ..
-		drwx------  2 root root    4096 Mar 15 03:01 .ssh
-		drwx------  3 root root    4096 Mar 15 03:01 snap
-		drwx------  4 root root    4096 Mar 15 03:38 .
+       root@60699ccd084b:~# unzip linux-amd64-glibc-nginx-1.18.0.zip 
+       Archive:  linux-amd64-glibc-nginx-1.18.0.zip
+       inflating: glibc-libinstana_sensor.so  
+       inflating: glibc-nginx-1.18.0-ngx_http_ot_module.so  
+       root@60699ccd084b:~# ls -lart
+       total 3924
+       -rw-r--r--  1 root root     161 Dec  5  2019 .profile
+       -rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+       -rwxr-xr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
+       -rwxr-xr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
+       -rwxrwxr-x  1 root root 1054316 Jan 22 16:29 linux-amd64-glibc-nginx-1.18.0.zip
+       drwxr-xr-x 19 root root    4096 Mar 15 03:01 ..
+       drwx------  2 root root    4096 Mar 15 03:01 .ssh
+       drwx------  3 root root    4096 Mar 15 03:01 snap
+       drwx------  4 root root    4096 Mar 15 03:38 .
 
 
 4. Agregar permisos de ejecucion sobre los binarios descargados
 
-	 Comando:
+   Comando:
 
-		chmod 775 glibc-*
+       chmod 775 glibc-*
 
-	 Resultado:
+   Resultado:
 
-		root@60699ccd084b:~# chmod 775 glibc-*
-		root@60699ccd084b:~# ls -lart
-		total 3924
-		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
-		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
-		-rwxrwxr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
-		-rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so		
+       root@60699ccd084b:~# chmod 775 glibc-*
+       root@60699ccd084b:~# ls -lart
+       total 3924
+       -rw-r--r--  1 root root     161 Dec  5  2019 .profile
+       -rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+       -rwxrwxr-x  1 root root 1147832 Jan 22 16:24 glibc-nginx-1.18.0-ngx_http_ot_module.so
+       -rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so		
 
 5. Modificar los nombres de las librerias descargadas.
 
-	 Comando:
+   Comando:
 
-		mv glibc-nginx-{nginx-version}-ngx_http_ot_module.so ngx_http_opentracing_module.so
-		mv glibc-libinstana_sensor.so libinstana_sensor.so
+       mv glibc-nginx-{nginx-version}-ngx_http_ot_module.so ngx_http_opentracing_module.so
+       mv glibc-libinstana_sensor.so libinstana_sensor.so
 
-	 Resultado:
+   Resultado:
 
-		root@60699ccd084b:~# mv glibc-nginx-1.18.0-ngx_http_ot_module.so ngx_http_opentracing_module.so
-		root@60699ccd084b:~# mv glibc-libinstana_sensor.so libinstana_sensor.so
-		root@60699ccd084b:~# ls -lart
-		total 3924
-		-rw-r--r--  1 root root     161 Dec  5  2019 .profile
-		-rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
-		-rwxrwxr-x  1 root root 1147832 Jan 22 16:24 ngx_http_opentracing_module.so
-		-rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
+       root@60699ccd084b:~# mv glibc-nginx-1.18.0-ngx_http_ot_module.so ngx_http_opentracing_module.so
+       root@60699ccd084b:~# mv glibc-libinstana_sensor.so libinstana_sensor.so
+       root@60699ccd084b:~# ls -lart
+       total 3924
+       -rw-r--r--  1 root root     161 Dec  5  2019 .profile
+       -rw-r--r--  1 root root    3106 Dec  5  2019 .bashrc
+       -rwxrwxr-x  1 root root 1147832 Jan 22 16:24 ngx_http_opentracing_module.so
+       -rwxrwxr-x  1 root root 1783768 Jan 22 16:24 glibc-libinstana_sensor.so
 
 
 6. Identificar el path de modulos de nginx.
 
-	 Comando:
+   Comando:
 
-		nginx -V
+       nginx -V
 
-	 Identificar la ubicacion de la ruta de los modulos de nginx:
+   Identificar la ubicacion de la ruta de los modulos de nginx:
 	
-		--modules-path=
+       --modules-path=
 
-	 Resultado:
+   Resultado:
 
-	 ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b6d79588-3fc3-4ca8-b21d-5a5602443542)
+   ![image](https://github.com/juan-conde-21/Nginx-Tracing/assets/13276404/b6d79588-3fc3-4ca8-b21d-5a5602443542)
 
-	*Nota: esta ruta depende de la configuración aplicada a nginx, para este ejemplo se encuentra en la ruta "/usr/lib/nginx/modules"
+   *Nota: esta ruta depende de la configuración aplicada a nginx, para este ejemplo se encuentra en la ruta "/usr/lib/nginx/modules"
 
 7. Crear la carpeta de modulos en caso no existir. (Opcional)
 
